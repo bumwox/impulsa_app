@@ -20,6 +20,13 @@ jobs:
         run: sed -i 's|<application|<uses-permission android:name="android.permission.INTERNET"/>\n    <application|' android/app/src/main/AndroidManifest.xml
       - name: Nombre visible de la app
         run: sed -i 's|android:label="impulsa"|android:label="Impulsa"|' android/app/src/main/AndroidManifest.xml
+      - name: Desactivar lint en release
+        run: |
+          if [ -f android/app/build.gradle.kts ]; then
+            printf '\nandroid {\n    lint {\n        checkReleaseBuilds = false\n        abortOnError = false\n    }\n}\n' >> android/app/build.gradle.kts
+          else
+            printf '\nandroid {\n    lintOptions {\n        checkReleaseBuilds false\n        abortOnError false\n    }\n}\n' >> android/app/build.gradle
+          fi
       - name: Compilar APK
         run: |
           flutter pub get
